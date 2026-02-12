@@ -31,7 +31,7 @@ st.markdown("""
     .color-red { color: #FF3131; }
     .color-blue { color: #3A86FF; }
     .color-green { color: #38B000; }
-    .color-white { color: #FFFFFF; text-shadow: 2px 2px 4px rgba(0,0,0,0.2); }
+    .color-black { color: #FFFFFF; text-shadow: 2px 2px 4px rgba(0,0,0,0.2); }
     
     .tagline { font-family: 'Inter', sans-serif; color: #64748B; font-size: 1.2rem; margin-top: 15px; }
     </style>
@@ -59,10 +59,10 @@ def render_header():
         <div class="header-box">
             <h1 class="main-title">
                 <span class="color-red">M</span><span class="color-blue">y</span> 
-                <span class="color-green">O</span><span class="color-white">f</span><span class="color-red">f</span><span class="color-blue">i</span><span class="color-green">c</span><span class="color-red">e</span>
+                <span class="color-green">O</span><span class="color-black">f</span><span class="color-red">f</span><span class="color-blue">i</span><span class="color-green">c</span><span class="color-red">e</span>
             </h1>
             <h1 class="main-title" style="font-size: 3.5rem;">
-                <span class="color-blue">S</span><span class="color-green">h</span><span class="color-white">o</span><span class="color-red">w</span><span class="color-blue">c</span><span class="color-green">a</span><span class="color-red">s</span><span class="color-blue">e</span>
+                <span class="color-blue">S</span><span class="color-green">h</span><span class="color-black">o</span><span class="color-red">w</span><span class="color-blue">c</span><span class="color-green">a</span><span class="color-red">s</span><span class="color-blue">e</span>
             </h1>
             <p class="tagline">Built with AI • My Personal Masterpiece • Designed to Shine</p>
         </div>
@@ -173,3 +173,4 @@ else:
                     st.rerun()
             
             st.markdown("<hr style='margin: 40px 0;'>", unsafe_allow_html=True)
+

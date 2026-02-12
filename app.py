@@ -4,36 +4,42 @@ import os
 import shutil
 from streamlit_quill import st_quill
 
-# --- 1. CONFIGURATION & THEME ---
+# --- 1. CONFIGURATION & DARK THEME ---
 st.set_page_config(page_title="My Office Showcase", layout="wide")
 
-# Custom CSS for the "Brilliant" feel
+# Custom CSS for the "Midnight Brilliant" feel
 st.markdown("""
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Bungee&family=Inter:wght@400;700&display=swap');
     
-    .main { background-color: #ffffff; }
-    .stButton>button { border-radius: 20px; font-weight: bold; }
+    /* Global Dark Background */
+    .stApp {
+        background-color: #0E1117;
+        color: #FFFFFF;
+    }
     
-    /* Project Card Styling */
+    /* Project Card Styling - Glassmorphism */
     .project-container {
-        border: 1px solid #f0f0f0;
+        border: 1px solid #30363d;
         padding: 30px;
         border-radius: 20px;
         margin-bottom: 50px;
-        background-color: #ffffff;
-        box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+        background-color: #161b22;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.5);
     }
     
-    /* Multicolor Header Styling */
-    .header-box { text-align: center; padding: 40px 0; background: #fcfcfc; border-radius: 30px; margin-bottom: 30px; }
+    /* Multicolor Header Styling on Black */
+    .header-box { text-align: center; padding: 40px 0; background: #161b22; border-radius: 30px; margin-bottom: 30px; border: 1px solid #30363d; }
     .main-title { font-family: 'Bungee', cursive; font-size: 4.5rem; letter-spacing: 2px; margin: 0; line-height: 1; }
-    .color-red { color: #FF3131; }
+    .color-red { color: #FF4B4B; }
     .color-blue { color: #3A86FF; }
-    .color-green { color: #38B000; }
-    .color-black { color: #FFFFFF; text-shadow: 2px 2px 4px rgba(0,0,0,0.2); }
+    .color-green { color: #00D084; }
+    .color-white { color: #FFFFFF; text-shadow: 0 0 10px rgba(255,255,255,0.3); }
     
-    .tagline { font-family: 'Inter', sans-serif; color: #64748B; font-size: 1.2rem; margin-top: 15px; }
+    .tagline { font-family: 'Inter', sans-serif; color: #8B949E; font-size: 1.2rem; margin-top: 15px; }
+    
+    /* Fixing text colors for inputs in dark mode */
+    .stMarkdown, p, h2, h3 { color: #FFFFFF !important; }
     </style>
     """, unsafe_allow_html=True)
 
@@ -42,7 +48,7 @@ if not os.path.exists(SAVE_DIR): os.makedirs(SAVE_DIR)
 
 # --- 2. DATABASE SETUP ---
 def init_db():
-    conn = sqlite3.connect('office_vault_final.db')
+    conn = sqlite3.connect('office_vault_dark.db')
     c = conn.cursor()
     c.execute('''CREATE TABLE IF NOT EXISTS projects 
                  (id INTEGER PRIMARY KEY AUTOINCREMENT, 
@@ -53,18 +59,18 @@ def init_db():
 
 init_db()
 
-# --- 3. THE BEAUTIFUL MULTICOLOR HEADER ---
+# --- 3. MULTICOLOR HEADER (DARK MODE OPTIMIZED) ---
 def render_header():
     st.markdown("""
         <div class="header-box">
             <h1 class="main-title">
                 <span class="color-red">M</span><span class="color-blue">y</span> 
-                <span class="color-green">O</span><span class="color-black">f</span><span class="color-red">f</span><span class="color-blue">i</span><span class="color-green">c</span><span class="color-red">e</span>
+                <span class="color-green">O</span><span class="color-white">f</span><span class="color-red">f</span><span class="color-blue">i</span><span class="color-green">c</span><span class="color-red">e</span>
             </h1>
             <h1 class="main-title" style="font-size: 3.5rem;">
-                <span class="color-blue">S</span><span class="color-green">h</span><span class="color-black">o</span><span class="color-red">w</span><span class="color-blue">c</span><span class="color-green">a</span><span class="color-red">s</span><span class="color-blue">e</span>
+                <span class="color-blue">S</span><span class="color-green">h</span><span class="color-white">o</span><span class="color-red">w</span><span class="color-blue">c</span><span class="color-green">a</span><span class="color-red">s</span><span class="color-blue">e</span>
             </h1>
-            <p class="tagline">Built with AI • My Personal Masterpiece • Designed to Shine</p>
+            <p class="tagline">Built with AI • My Personal Masterpiece • Shining in the Dark</p>
         </div>
         """, unsafe_allow_html=True)
 
@@ -87,7 +93,7 @@ render_header()
 
 # ADD NEW PROJECT (ADMIN ONLY)
 if menu == "✨ Add New Project":
-    st.markdown("### 📝 Create a New Project Entry")
+    st.markdown("## ✨ Add a New Masterpiece")
     with st.form("project_form", clear_on_submit=True):
         col1, col2 = st.columns(2)
         title = col1.text_input("Project Name")
@@ -95,6 +101,8 @@ if menu == "✨ Add New Project":
         link = st.text_input("Live Link (Optional)")
         
         st.write("---")
+        st.write("Project Story:")
+        # Quill Editor (Note: Quill background might stay white/light)
         desc = st_quill(html=True, placeholder="Write your project story here...")
         
         st.write("---")
@@ -110,7 +118,7 @@ if menu == "✨ Add New Project":
                     with open(os.path.join(path, f.name), "wb") as file:
                         file.write(f.getbuffer())
                 
-                conn = sqlite3.connect('office_vault_final.db')
+                conn = sqlite3.connect('office_vault_dark.db')
                 c = conn.cursor()
                 c.execute("INSERT INTO projects (header, subtitle, description, link, folder_name) VALUES (?,?,?,?,?)",
                           (title, sub, desc, link, folder_name))
@@ -124,7 +132,7 @@ if menu == "✨ Add New Project":
 
 # VIEW GALLERY (PUBLIC VIEW)
 else:
-    conn = sqlite3.connect('office_vault_final.db')
+    conn = sqlite3.connect('office_vault_dark.db')
     c = conn.cursor()
     c.execute("SELECT * FROM projects ORDER BY id DESC")
     rows = c.fetchall()
@@ -134,7 +142,6 @@ else:
         st.warning("Your showcase is currently empty. Use the admin password to add projects!")
 
     for r in rows:
-        # r[0]=id, r[1]=title, r[2]=sub, r[3]=desc, r[4]=link, r[5]=folder
         with st.container():
             st.markdown(f"## {r[1]}")
             st.markdown(f"<p style='color:#3a7bd5; font-size:1.2rem; font-weight:bold; margin-top:-15px;'>{r[2]}</p>", unsafe_allow_html=True)
@@ -150,7 +157,7 @@ else:
                     # Smaller Grid for rest of images
                     if len(imgs) > 1:
                         cols = st.columns(4)
-                        for i, img_name in enumerate(imgs[1:5]): # Show next 4
+                        for i, img_name in enumerate(imgs[1:5]):
                             cols[i].image(os.path.join(f_path, img_name), use_container_width=True)
             
             # --- DESCRIPTION ---
@@ -164,7 +171,7 @@ else:
             
             if is_admin:
                 if col_del.button("🗑️", key=f"del_{r[0]}"):
-                    conn = sqlite3.connect('office_vault_final.db')
+                    conn = sqlite3.connect('office_vault_dark.db')
                     c = conn.cursor()
                     c.execute("DELETE FROM projects WHERE id=?", (r[0],))
                     conn.commit()
@@ -172,5 +179,4 @@ else:
                     if os.path.exists(f_path): shutil.rmtree(f_path)
                     st.rerun()
             
-            st.markdown("<hr style='margin: 40px 0;'>", unsafe_allow_html=True)
-
+            st.markdown("<hr style='border-color: #30363d; margin: 40px 0;'>", unsafe_allow_html=True)

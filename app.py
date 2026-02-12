@@ -1,41 +1,48 @@
 import streamlit as st
 import sqlite3
-import json
 import os
 import shutil
 from streamlit_quill import st_quill
 
-# --- CONFIGURATION & THEME ---
+# --- 1. CONFIGURATION & THEME ---
 st.set_page_config(page_title="My Office Showcase", layout="wide")
 
-# Custom CSS for a "Brilliant" look
+# Custom CSS for the "Brilliant" feel
 st.markdown("""
     <style>
-    .main { background-color: #FFFFFF; }
-    .stButton>button {
+    @import url('https://fonts.googleapis.com/css2?family=Bungee&family=Inter:wght@400;700&display=swap');
+    
+    .main { background-color: #ffffff; }
+    .stButton>button { border-radius: 20px; font-weight: bold; }
+    
+    /* Project Card Styling */
+    .project-container {
+        border: 1px solid #f0f0f0;
+        padding: 30px;
         border-radius: 20px;
-        background-color: #3a7bd5;
-        color: white;
-        border: none;
-        padding: 0.5rem 2rem;
+        margin-bottom: 50px;
+        background-color: #ffffff;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.05);
     }
-    .project-card {
-        background-color: #f8f9fa;
-        padding: 25px;
-        border-radius: 15px;
-        border: 1px solid #eee;
-        margin-bottom: 20px;
-    }
+    
+    /* Multicolor Header Styling */
+    .header-box { text-align: center; padding: 40px 0; background: #fcfcfc; border-radius: 30px; margin-bottom: 30px; }
+    .main-title { font-family: 'Bungee', cursive; font-size: 4.5rem; letter-spacing: 2px; margin: 0; line-height: 1; }
+    .color-red { color: #FF3131; }
+    .color-blue { color: #3A86FF; }
+    .color-green { color: #38B000; }
+    .color-white { color: #FFFFFF; text-shadow: 2px 2px 4px rgba(0,0,0,0.2); }
+    
+    .tagline { font-family: 'Inter', sans-serif; color: #64748B; font-size: 1.2rem; margin-top: 15px; }
     </style>
     """, unsafe_allow_html=True)
 
-SAVE_DIR = "showcase_data"
-if not os.path.exists(SAVE_DIR):
-    os.makedirs(SAVE_DIR)
+SAVE_DIR = "showcase_media"
+if not os.path.exists(SAVE_DIR): os.makedirs(SAVE_DIR)
 
-# --- DATABASE ---
+# --- 2. DATABASE SETUP ---
 def init_db():
-    conn = sqlite3.connect('my_office_final.db')
+    conn = sqlite3.connect('office_vault_final.db')
     c = conn.cursor()
     c.execute('''CREATE TABLE IF NOT EXISTS projects 
                  (id INTEGER PRIMARY KEY AUTOINCREMENT, 
@@ -46,148 +53,123 @@ def init_db():
 
 init_db()
 
-# --- ADMIN SECURITY ---
-st.sidebar.title("🔐 Admin Access")
-# CHANGE 'admin123' TO YOUR OWN SECRET PASSWORD
-PASSWORD = "your_secret_password" 
-user_pwd = st.sidebar.text_input("Enter Password to Edit", type="password")
-is_admin = (user_pwd == PASSWORD)
-
-# --- NAVIGATION ---
-if is_admin:
-    st.sidebar.success("Logged in as Admin")
-    menu = st.sidebar.radio("Navigation", ["📂 View Gallery", "✨ Add New Project"])
-else:
-    st.sidebar.info("Viewer Mode: Add/Delete locked.")
-    menu = "📂 View Gallery"
-
-# --- HEADER ---
+# --- 3. THE BEAUTIFUL MULTICOLOR HEADER ---
 def render_header():
     st.markdown("""
-        <style>
-        @import url('https://fonts.googleapis.com/css2?family=Bungee&display=swap');
-        
-        .header-container {
-            text-align: center;
-            padding: 30px;
-            background-color: #fcfcfc; /* Very light grey so the white text pops */
-            border-radius: 20px;
-            margin-bottom: 20px;
-        }
-        
-        .main-title {
-            font-family: 'Bungee', cursive; /* Bold, fun font */
-            font-size: 4rem;
-            letter-spacing: 2px;
-            margin: 0;
-        }
-
-        /* Mixing the colors */
-        .color-m { color: #FF3131; } /* Red */
-        .color-y { color: #3A86FF; } /* Blue */
-        .color-o { color: #38B000; } /* Green */
-        .color-f { color: #FFFFFF; text-shadow: 2px 2px 4px #00000033; } /* White with shadow */
-        .color-i { color: #FF3131; } /* Red */
-        .color-c { color: #3A86FF; } /* Blue */
-        .color-e { color: #38B000; } /* Green */
-        
-        .tagline {
-            color: #64748B;
-            font-size: 1.1rem;
-            font-weight: 500;
-            margin-top: 10px;
-        }
-        </style>
-        
-        <div class="header-container">
+        <div class="header-box">
             <h1 class="main-title">
-                <span class="color-m">M</span><span class="color-y">y</span> 
-                <span class="color-o">O</span><span class="color-f">f</span><span class="color-i">f</span><span class="color-c">i</span><span class="color-e">c</span><span class="color-m">e</span>
+                <span class="color-red">M</span><span class="color-blue">y</span> 
+                <span class="color-green">O</span><span class="color-white">f</span><span class="color-red">f</span><span class="color-blue">i</span><span class="color-green">c</span><span class="color-red">e</span>
             </h1>
-            <h1 class="main-title" style="font-size: 3rem; margin-top: -20px;">
-                <span class="color-y">S</span><span class="color-o">h</span><span class="color-f">o</span><span class="color-i">w</span><span class="color-c">c</span><span class="color-e">a</span><span class="color-m">s</span><span class="color-y">e</span>
+            <h1 class="main-title" style="font-size: 3.5rem;">
+                <span class="color-blue">S</span><span class="color-green">h</span><span class="color-white">o</span><span class="color-red">w</span><span class="color-blue">c</span><span class="color-green">a</span><span class="color-red">s</span><span class="color-blue">e</span>
             </h1>
-            <p class="tagline">Built with AI • Curated by Me • Styled for You</p>
+            <p class="tagline">Built with AI • My Personal Masterpiece • Designed to Shine</p>
         </div>
         """, unsafe_allow_html=True)
 
+# --- 4. ADMIN SECURITY ---
+st.sidebar.title("🔐 Admin Access")
+# --- !!! CHANGE THE PASSWORD BELOW !!! ---
+ADMIN_PASSWORD = "your_secret_password" 
+user_input = st.sidebar.text_input("Owner Password", type="password")
+is_admin = (user_input == ADMIN_PASSWORD)
 
-# --- ADD PROJECT (ADMIN ONLY) ---
+if is_admin:
+    st.sidebar.success("Welcome back, Boss!")
+    menu = st.sidebar.radio("Navigation", ["📂 View Gallery", "✨ Add New Project"])
+else:
+    st.sidebar.info("Viewer Mode (Locked)")
+    menu = "📂 View Gallery"
+
+# --- 5. MAIN APP LOGIC ---
+render_header()
+
+# ADD NEW PROJECT (ADMIN ONLY)
 if menu == "✨ Add New Project":
-    st.subheader("Add a New Masterpiece")
-    with st.form("upload_form"):
-        h_input = st.text_input("Project Title")
-        s_input = st.text_input("Subtitle (Your Role)")
-        l_input = st.text_input("Project Link")
-        d_input = st_quill(html=True, placeholder="Describe your work...")
-        u_files = st.file_uploader("Upload Images (Max 10)", accept_multiple_files=True, type=['png', 'jpg', 'jpeg'])
+    st.markdown("### 📝 Create a New Project Entry")
+    with st.form("project_form", clear_on_submit=True):
+        col1, col2 = st.columns(2)
+        title = col1.text_input("Project Name")
+        sub = col2.text_input("Your Role / Category")
+        link = st.text_input("Live Link (Optional)")
         
-        if st.form_submit_button("Publish Now"):
-            if h_input and u_files:
-                folder_name = h_input.replace(" ", "_").lower()
+        st.write("---")
+        desc = st_quill(html=True, placeholder="Write your project story here...")
+        
+        st.write("---")
+        files = st.file_uploader("Upload up to 10 Images", accept_multiple_files=True, type=['png', 'jpg', 'jpeg'])
+        
+        if st.form_submit_button("Publish to My Office"):
+            if title and files:
+                folder_name = title.replace(" ", "_").lower()
                 path = os.path.join(SAVE_DIR, folder_name)
                 if not os.path.exists(path): os.makedirs(path)
-                for f in u_files:
-                    with open(os.path.join(path, f.name), "wb") as save_file:
-                        save_file.write(f.getbuffer())
                 
-                conn = sqlite3.connect('my_office_final.db')
+                for f in files:
+                    with open(os.path.join(path, f.name), "wb") as file:
+                        file.write(f.getbuffer())
+                
+                conn = sqlite3.connect('office_vault_final.db')
                 c = conn.cursor()
                 c.execute("INSERT INTO projects (header, subtitle, description, link, folder_name) VALUES (?,?,?,?,?)",
-                          (h_input, s_input, d_input, l_input, folder_name))
+                          (title, sub, desc, link, folder_name))
                 conn.commit()
                 conn.close()
-                st.success("Published!")
+                st.success("Project published beautifully!")
+                st.balloons()
                 st.rerun()
+            else:
+                st.error("Title and Images are required!")
 
-# --- VIEW GALLERY (PUBLIC) ---
+# VIEW GALLERY (PUBLIC VIEW)
 else:
-    conn = sqlite3.connect('my_office_final.db')
+    conn = sqlite3.connect('office_vault_final.db')
     c = conn.cursor()
     c.execute("SELECT * FROM projects ORDER BY id DESC")
-    projects = c.fetchall()
+    rows = c.fetchall()
     conn.close()
 
-    for p in projects:
-        # 1. Title & Subtitle
-        st.markdown(f"<div class='project-header'>{p[1]}</div>", unsafe_allow_html=True)
-        st.markdown(f"<div class='project-subtitle'>{p[2]}</div>", unsafe_allow_html=True)
-        
-        # 2. BOLD IMAGES AT THE TOP
-        img_path = os.path.join(SAVE_DIR, p[5])
-        if os.path.exists(img_path):
-            imgs = os.listdir(img_path)
-            if imgs:
-                # Big Featured Image
-                st.image(os.path.join(img_path, imgs[0]), use_container_width=True)
-                # Small thumbnails below
-                if len(imgs) > 1:
-                    cols = st.columns(min(len(imgs)-1, 4))
-                    for idx, img_name in enumerate(imgs[1:5]):
-                        cols[idx].image(os.path.join(img_path, img_name), use_container_width=True)
+    if not rows:
+        st.warning("Your showcase is currently empty. Use the admin password to add projects!")
 
-        # 3. DESCRIPTION & LINK
-        st.markdown("<br>", unsafe_allow_html=True)
-        st.markdown(p[3], unsafe_allow_html=True)
-        
-        col_btn, col_del = st.columns([8, 1])
-        if p[4]:
-            col_btn.link_button("🚀 View Live Project", p[4])
-        
-        # 4. DELETE (ADMIN ONLY)
-        if is_admin:
-            if col_del.button("🗑️", key=f"del_{p[0]}"):
-                conn = sqlite3.connect('my_office_final.db')
-                c = conn.cursor()
-                c.execute("DELETE FROM projects WHERE id=?", (p[0],))
-                conn.commit()
-                conn.close()
-                if os.path.exists(img_path): shutil.rmtree(img_path)
-                st.rerun()
-        
-        st.markdown("<hr>", unsafe_allow_html=True)
-
-
-
-
-
+    for r in rows:
+        # r[0]=id, r[1]=title, r[2]=sub, r[3]=desc, r[4]=link, r[5]=folder
+        with st.container():
+            st.markdown(f"## {r[1]}")
+            st.markdown(f"<p style='color:#3a7bd5; font-size:1.2rem; font-weight:bold; margin-top:-15px;'>{r[2]}</p>", unsafe_allow_html=True)
+            
+            # --- BOLD MEDIA LAYOUT ---
+            f_path = os.path.join(SAVE_DIR, r[5])
+            if os.path.exists(f_path):
+                imgs = os.listdir(f_path)
+                if imgs:
+                    # Top Bold Hero Image
+                    st.image(os.path.join(f_path, imgs[0]), use_container_width=True)
+                    
+                    # Smaller Grid for rest of images
+                    if len(imgs) > 1:
+                        cols = st.columns(4)
+                        for i, img_name in enumerate(imgs[1:5]): # Show next 4
+                            cols[i].image(os.path.join(f_path, img_name), use_container_width=True)
+            
+            # --- DESCRIPTION ---
+            st.markdown("<br>", unsafe_allow_html=True)
+            st.markdown(r[3], unsafe_allow_html=True)
+            
+            # --- FOOTER BUTTONS ---
+            col_web, col_spacer, col_del = st.columns([2, 6, 1])
+            if r[4]:
+                col_web.link_button("🌐 Visit Project", r[4])
+            
+            if is_admin:
+                if col_del.button("🗑️", key=f"del_{r[0]}"):
+                    conn = sqlite3.connect('office_vault_final.db')
+                    c = conn.cursor()
+                    c.execute("DELETE FROM projects WHERE id=?", (r[0],))
+                    conn.commit()
+                    conn.close()
+                    if os.path.exists(f_path): shutil.rmtree(f_path)
+                    st.rerun()
+            
+            st.markdown("<hr style='margin: 40px 0;'>", unsafe_allow_html=True)

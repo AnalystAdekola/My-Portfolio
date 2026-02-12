@@ -4,42 +4,64 @@ import os
 import shutil
 from streamlit_quill import st_quill
 
-# --- 1. CONFIGURATION & DARK THEME ---
+# --- 1. CONFIGURATION & STUDIO THEME ---
 st.set_page_config(page_title="My Office Showcase", layout="wide")
 
-# Custom CSS for the "Midnight Brilliant" feel
+# Custom CSS for "The Studio" look
 st.markdown("""
     <style>
-    @import url('https://fonts.googleapis.com/css2?family=Bungee&family=Inter:wght@400;700&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;700&family=Playfair+Display:ital,wght@0,700;1,700&display=swap');
     
-    /* Global Dark Background */
     .stApp {
-        background-color: #0E1117;
+        background-color: #050505;
+        color: #E0E0E0;
+    }
+    
+    /* Elegant Header */
+    .header-box { text-align: center; padding: 60px 0 40px 0; }
+    .main-title { 
+        font-family: 'Playfair Display', serif; 
+        font-size: 4.5rem; 
         color: #FFFFFF;
+        letter-spacing: -1px;
+        margin: 0;
     }
-    
-    /* Project Card Styling - Glassmorphism */
+    .title-accent { color: #3A86FF; font-style: italic; }
+    .tagline { 
+        font-family: 'Inter', sans-serif; 
+        color: #666666; 
+        font-size: 1rem; 
+        letter-spacing: 3px; 
+        text-transform: uppercase;
+        margin-top: 10px; 
+    }
+
+    /* Project Cards */
     .project-container {
-        border: 1px solid #30363d;
-        padding: 30px;
-        border-radius: 20px;
-        margin-bottom: 50px;
-        background-color: #161b22;
-        box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+        border-bottom: 1px solid #1A1A1A;
+        padding-bottom: 60px;
+        margin-bottom: 60px;
     }
     
-    /* Multicolor Header Styling on Black */
-    .header-box { text-align: center; padding: 40px 0; background: #161b22; border-radius: 30px; margin-bottom: 30px; border: 1px solid #30363d; }
-    .main-title { font-family: 'Bungee', cursive; font-size: 4.5rem; letter-spacing: 2px; margin: 0; line-height: 1; }
-    .color-red { color: #FF4B4B; }
-    .color-blue { color: #3A86FF; }
-    .color-green { color: #00D084; }
-    .color-white { color: #FFFFFF; text-shadow: 0 0 10px rgba(255,255,255,0.3); }
+    .project-title {
+        font-family: 'Playfair Display', serif;
+        font-size: 2.5rem;
+        color: #FFFFFF;
+        margin-bottom: 5px;
+    }
     
-    .tagline { font-family: 'Inter', sans-serif; color: #8B949E; font-size: 1.2rem; margin-top: 15px; }
-    
-    /* Fixing text colors for inputs in dark mode */
-    .stMarkdown, p, h2, h3 { color: #FFFFFF !important; }
+    .project-sub {
+        font-family: 'Inter', sans-serif;
+        color: #3A86FF;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        font-size: 0.9rem;
+        margin-bottom: 25px;
+    }
+
+    /* Input focus colors */
+    .stTextInput>div>div>input { background-color: #111; color: white; border-color: #222; }
     </style>
     """, unsafe_allow_html=True)
 
@@ -48,7 +70,7 @@ if not os.path.exists(SAVE_DIR): os.makedirs(SAVE_DIR)
 
 # --- 2. DATABASE SETUP ---
 def init_db():
-    conn = sqlite3.connect('office_vault_dark.db')
+    conn = sqlite3.connect('office_studio.db')
     c = conn.cursor()
     c.execute('''CREATE TABLE IF NOT EXISTS projects 
                  (id INTEGER PRIMARY KEY AUTOINCREMENT, 
@@ -59,33 +81,27 @@ def init_db():
 
 init_db()
 
-# --- 3. MULTICOLOR HEADER (DARK MODE OPTIMIZED) ---
+# --- 3. MINIMALIST HEADER ---
 def render_header():
     st.markdown("""
         <div class="header-box">
-            <h1 class="main-title">
-                <span class="color-red">M</span><span class="color-blue">y</span> 
-                <span class="color-green">O</span><span class="color-white">f</span><span class="color-red">f</span><span class="color-blue">i</span><span class="color-green">c</span><span class="color-red">e</span>
-            </h1>
-            <h1 class="main-title" style="font-size: 3.5rem;">
-                <span class="color-blue">S</span><span class="color-green">h</span><span class="color-white">o</span><span class="color-red">w</span><span class="color-blue">c</span><span class="color-green">a</span><span class="color-red">s</span><span class="color-blue">e</span>
-            </h1>
-            <p class="tagline">Built with AI • My Personal Masterpiece • Shining in the Dark</p>
+            <h1 class="main-title">My Office <span class="title-accent">Showcase</span></h1>
+            <p class="tagline">Portfolio Collection • Vol. 01</p>
         </div>
         """, unsafe_allow_html=True)
 
 # --- 4. ADMIN SECURITY ---
 st.sidebar.title("🔐 Admin Access")
-# --- !!! CHANGE THE PASSWORD BELOW !!! ---
+# --- SET YOUR PASSWORD HERE ---
 ADMIN_PASSWORD = "your_secret_password" 
 user_input = st.sidebar.text_input("Owner Password", type="password")
 is_admin = (user_input == ADMIN_PASSWORD)
 
 if is_admin:
-    st.sidebar.success("Welcome back, Boss!")
+    st.sidebar.success("Admin Session Active")
     menu = st.sidebar.radio("Navigation", ["📂 View Gallery", "✨ Add New Project"])
 else:
-    st.sidebar.info("Viewer Mode (Locked)")
+    st.sidebar.info("Public Gallery View")
     menu = "📂 View Gallery"
 
 # --- 5. MAIN APP LOGIC ---
@@ -93,22 +109,19 @@ render_header()
 
 # ADD NEW PROJECT (ADMIN ONLY)
 if menu == "✨ Add New Project":
-    st.markdown("## ✨ Add a New Masterpiece")
+    st.markdown("## ✨ New Entry")
     with st.form("project_form", clear_on_submit=True):
         col1, col2 = st.columns(2)
         title = col1.text_input("Project Name")
-        sub = col2.text_input("Your Role / Category")
-        link = st.text_input("Live Link (Optional)")
+        sub = col2.text_input("Role / Category")
+        link = st.text_input("Live Link")
         
         st.write("---")
-        st.write("Project Story:")
-        # Quill Editor (Note: Quill background might stay white/light)
-        desc = st_quill(html=True, placeholder="Write your project story here...")
+        desc = st_quill(html=True, placeholder="Project narrative...")
         
-        st.write("---")
-        files = st.file_uploader("Upload up to 10 Images", accept_multiple_files=True, type=['png', 'jpg', 'jpeg'])
+        files = st.file_uploader("Project Media (Max 10)", accept_multiple_files=True, type=['png', 'jpg', 'jpeg'])
         
-        if st.form_submit_button("Publish to My Office"):
+        if st.form_submit_button("Publish Entry"):
             if title and files:
                 folder_name = title.replace(" ", "_").lower()
                 path = os.path.join(SAVE_DIR, folder_name)
@@ -118,60 +131,57 @@ if menu == "✨ Add New Project":
                     with open(os.path.join(path, f.name), "wb") as file:
                         file.write(f.getbuffer())
                 
-                conn = sqlite3.connect('office_vault_dark.db')
+                conn = sqlite3.connect('office_studio.db')
                 c = conn.cursor()
                 c.execute("INSERT INTO projects (header, subtitle, description, link, folder_name) VALUES (?,?,?,?,?)",
                           (title, sub, desc, link, folder_name))
                 conn.commit()
                 conn.close()
-                st.success("Project published beautifully!")
-                st.balloons()
+                st.success("Entry added to vault.")
                 st.rerun()
-            else:
-                st.error("Title and Images are required!")
 
 # VIEW GALLERY (PUBLIC VIEW)
 else:
-    conn = sqlite3.connect('office_vault_dark.db')
+    conn = sqlite3.connect('office_studio.db')
     c = conn.cursor()
     c.execute("SELECT * FROM projects ORDER BY id DESC")
     rows = c.fetchall()
     conn.close()
 
     if not rows:
-        st.warning("Your showcase is currently empty. Use the admin password to add projects!")
+        st.warning("Vault empty. Access admin to populate.")
 
     for r in rows:
         with st.container():
-            st.markdown(f"## {r[1]}")
-            st.markdown(f"<p style='color:#3a7bd5; font-size:1.2rem; font-weight:bold; margin-top:-15px;'>{r[2]}</p>", unsafe_allow_html=True)
+            st.markdown(f"<div class='project-title'>{r[1]}</div>", unsafe_allow_html=True)
+            st.markdown(f"<div class='project-sub'>{r[2]}</div>", unsafe_allow_html=True)
             
-            # --- BOLD MEDIA LAYOUT ---
+            # --- MEDIA ---
             f_path = os.path.join(SAVE_DIR, r[5])
             if os.path.exists(f_path):
                 imgs = os.listdir(f_path)
                 if imgs:
-                    # Top Bold Hero Image
+                    # Massive Hero Image
                     st.image(os.path.join(f_path, imgs[0]), use_container_width=True)
                     
-                    # Smaller Grid for rest of images
+                    # Thumbnails
                     if len(imgs) > 1:
-                        cols = st.columns(4)
-                        for i, img_name in enumerate(imgs[1:5]):
+                        cols = st.columns(5)
+                        for i, img_name in enumerate(imgs[1:6]):
                             cols[i].image(os.path.join(f_path, img_name), use_container_width=True)
             
             # --- DESCRIPTION ---
             st.markdown("<br>", unsafe_allow_html=True)
             st.markdown(r[3], unsafe_allow_html=True)
             
-            # --- FOOTER BUTTONS ---
+            # --- ACTIONS ---
             col_web, col_spacer, col_del = st.columns([2, 6, 1])
             if r[4]:
-                col_web.link_button("🌐 Visit Project", r[4])
+                col_web.link_button("View Case Study", r[4])
             
             if is_admin:
                 if col_del.button("🗑️", key=f"del_{r[0]}"):
-                    conn = sqlite3.connect('office_vault_dark.db')
+                    conn = sqlite3.connect('office_studio.db')
                     c = conn.cursor()
                     c.execute("DELETE FROM projects WHERE id=?", (r[0],))
                     conn.commit()
@@ -179,4 +189,4 @@ else:
                     if os.path.exists(f_path): shutil.rmtree(f_path)
                     st.rerun()
             
-            st.markdown("<hr style='border-color: #30363d; margin: 40px 0;'>", unsafe_allow_html=True)
+            st.markdown("<hr style='border-color: #1A1A1A; margin: 60px 0;'>", unsafe_allow_html=True)

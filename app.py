@@ -93,7 +93,7 @@ def render_header():
 # --- 4. ADMIN SECURITY ---
 st.sidebar.title("🔐 Admin Access")
 # --- SET YOUR PASSWORD HERE ---
-ADMIN_PASSWORD = "your_secret_password" 
+ADMIN_PASSWORD = "Adedayo" 
 user_input = st.sidebar.text_input("Owner Password", type="password")
 is_admin = (user_input == ADMIN_PASSWORD)
 
@@ -190,3 +190,4 @@ else:
                     st.rerun()
             
             st.markdown("<hr style='border-color: #1A1A1A; margin: 60px 0;'>", unsafe_allow_html=True)
+

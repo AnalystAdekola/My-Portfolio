@@ -16,13 +16,19 @@ if not os.path.exists(SAVE_DIR):
 def init_db():
     conn = sqlite3.connect('portfolio.db')
     c = conn.cursor()
+    # Create table if it doesn't exist
     c.execute('''CREATE TABLE IF NOT EXISTS projects 
                  (id INTEGER PRIMARY KEY, header TEXT, subtitle TEXT, 
                   description TEXT, link TEXT, folder_name TEXT)''')
+    
+    # Check if we need to add the folder_name column to an old database
+    c.execute("PRAGMA table_info(projects)")
+    columns = [column[1] for column in c.fetchall()]
+    if 'folder_name' not in columns:
+        c.execute("ALTER TABLE projects ADD COLUMN folder_name TEXT")
+        
     conn.commit()
     conn.close()
-
-init_db()
 
 # --- BEAUTIFUL HEADER ---
 def render_header():
@@ -137,3 +143,4 @@ else:
                         cols[idx % 5].image(os.path.join(folder_path, img_name), use_container_width=True)
             
             st.divider()
+

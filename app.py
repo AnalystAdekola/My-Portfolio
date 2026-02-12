@@ -6,7 +6,7 @@ import shutil
 from streamlit_quill import st_quill
 
 # --- CONFIGURATION & THEME ---
-st.set_page_config(page_title="My Office Showcase", layout="wide", initial_sidebar_state="expanded")
+st.set_page_config(page_title="My Office Showcase", layout="wide")
 
 # Custom CSS for a "Brilliant" look
 st.markdown("""
@@ -139,4 +139,5 @@ else:
                 st.rerun()
         
         st.markdown("<hr>", unsafe_allow_html=True)
+
 

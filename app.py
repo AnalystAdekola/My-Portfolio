@@ -62,8 +62,33 @@ else:
     menu = "📂 View Gallery"
 
 # --- HEADER ---
-st.markdown("<h1 style='text-align: center; color: #1E293B;'>My Office Showcase</h1>", unsafe_allow_html=True)
-st.markdown("<p style='text-align: center; color: #64748B;'>Organized with AI. Designed for Brilliance.</p><hr>", unsafe_allow_html=True)
+#st.markdown("<h1 style='text-align: center; color: #1E293B;'>My Office Showcase</h1>", unsafe_allow_html=True)
+#st.markdown("<p style='text-align: center; color: #64748B;'>Organized with AI. Designed for Brilliance.</p><hr>", unsafe_allow_html=True)
+##################################
+
+def render_header():
+    st.markdown("""
+        <style>
+        .main-title {
+            font-family: 'Helvetica', sans-serif;
+            font-weight: 800;
+            font-size: 3.5rem;
+            color: #2E4053;
+            text-align: center;
+        }
+        .subtitle {
+            font-size: 1.2rem;
+            color: #5D6D7E;
+            text-align: center;
+            font-style: italic;
+        }
+        </style>
+        <h1 class="main-title">My Office Showcase</h1>
+        <p class="subtitle">The easy, beautiful way to display your best work.</p>
+        <hr>
+        """, unsafe_allow_html=True)
+
+
 
 # --- ADD PROJECT (ADMIN ONLY) ---
 if menu == "✨ Add New Project":
@@ -139,5 +164,6 @@ else:
                 st.rerun()
         
         st.markdown("<hr>", unsafe_allow_html=True)
+
 
 

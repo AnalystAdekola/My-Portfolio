@@ -62,8 +62,54 @@ else:
     menu = "📂 View Gallery"
 
 # --- HEADER ---
-st.markdown("<h1 style='text-align: center; color: #1E293B;'>My Office Showcase</h1>", unsafe_allow_html=True)
-st.markdown("<p style='text-align: center; color: #64748B;'>Organized with AI. Designed for Brilliance.</p><hr>", unsafe_allow_html=True)
+def render_header():
+    st.markdown("""
+        <style>
+        @import url('https://fonts.googleapis.com/css2?family=Bungee&display=swap');
+        
+        .header-container {
+            text-align: center;
+            padding: 30px;
+            background-color: #fcfcfc; /* Very light grey so the white text pops */
+            border-radius: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .main-title {
+            font-family: 'Bungee', cursive; /* Bold, fun font */
+            font-size: 4rem;
+            letter-spacing: 2px;
+            margin: 0;
+        }
+
+        /* Mixing the colors */
+        .color-m { color: #FF3131; } /* Red */
+        .color-y { color: #3A86FF; } /* Blue */
+        .color-o { color: #38B000; } /* Green */
+        .color-f { color: #FFFFFF; text-shadow: 2px 2px 4px #00000033; } /* White with shadow */
+        .color-i { color: #FF3131; } /* Red */
+        .color-c { color: #3A86FF; } /* Blue */
+        .color-e { color: #38B000; } /* Green */
+        
+        .tagline {
+            color: #64748B;
+            font-size: 1.1rem;
+            font-weight: 500;
+            margin-top: 10px;
+        }
+        </style>
+        
+        <div class="header-container">
+            <h1 class="main-title">
+                <span class="color-m">M</span><span class="color-y">y</span> 
+                <span class="color-o">O</span><span class="color-f">f</span><span class="color-i">f</span><span class="color-c">i</span><span class="color-e">c</span><span class="color-m">e</span>
+            </h1>
+            <h1 class="main-title" style="font-size: 3rem; margin-top: -20px;">
+                <span class="color-y">S</span><span class="color-o">h</span><span class="color-f">o</span><span class="color-i">w</span><span class="color-c">c</span><span class="color-e">a</span><span class="color-m">s</span><span class="color-y">e</span>
+            </h1>
+            <p class="tagline">Built with AI • Curated by Me • Styled for You</p>
+        </div>
+        """, unsafe_allow_html=True)
 
 
 # --- ADD PROJECT (ADMIN ONLY) ---
@@ -140,6 +186,7 @@ else:
                 st.rerun()
         
         st.markdown("<hr>", unsafe_allow_html=True)
+
 
 
 

@@ -37,6 +37,21 @@ st.markdown("""
 SAVE_DIR = "showcase_media"
 if not os.path.exists(SAVE_DIR): os.makedirs(SAVE_DIR)
 
+
+# Add this to your existing <style> block or create a new one:
+st.markdown("""
+    <style>
+    /* This hides the GitHub icon and the 'Made with Streamlit' footer */
+    #MainMenu {visibility: hidden;}
+    footer {visibility: hidden;}
+    header {visibility: hidden;}
+    
+    /* This specifically targets the deployment link icon */
+    .viewerBadge_container__1QS1n {display: none !important;}
+    .stDeployButton {display: none !important;}
+    </style>
+    """, unsafe_allow_html=True)
+
 # --- 2. DATABASE SETUP ---
 def init_db():
     conn = sqlite3.connect('office_studio.db')
@@ -198,3 +213,4 @@ else:
                     st.rerun()
             
             st.markdown("<hr style='border-color: #1A1A1A; margin: 60px 0;'>", unsafe_allow_html=True)
+
